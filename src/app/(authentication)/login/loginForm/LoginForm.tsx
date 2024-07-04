@@ -1,5 +1,6 @@
 "use client";
 import ProfileServices from "@/services/profile.services";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import Link from "next/link";
 import React, { useState } from "react";
 
@@ -7,16 +8,22 @@ const LoginForm = () => {
   const [username, setUsername] = useState<string>("");
   const [password, setPassword] = useState<string>("");
 
-  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+  const loginMutation = useMutation({
+    mutationFn: (payload: any) => ProfileServices.login(payload),
+    onSuccess: () => {
+      console.log("loggedin");
+    },
+  });
+
+  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const userData = {
-      username: username,
-      password: password,
+      username,
+      password,
     };
-    console.log(userData, "INITIAL DATA");
-    const submit = await ProfileServices.login(userData);
-    console.log("data:" + submit, "DATA");
-    // const token = submit?.jwt;
+    loginMutation.mutate(userData);
+
+    console.log(userData);
   };
 
   return (
