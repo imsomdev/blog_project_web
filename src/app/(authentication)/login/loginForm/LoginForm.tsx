@@ -1,34 +1,60 @@
 "use client";
 import ProfileServices from "@/services/profile.services";
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { setLocalValue } from "@/utils/auth";
+import { useMutation } from "@tanstack/react-query";
 import Link from "next/link";
-import React, { useState } from "react";
+import React from "react";
+import { useForm } from "react-hook-form";
+import * as z from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useRouter } from "next/navigation";
+
+const LoginSchema = z.object({
+  username: z.string().min(1, { message: "Username is required" }).trim(),
+  password: z
+    .string()
+    .min(6, { message: "Password must be at least 6 characters long" })
+    .trim(),
+});
 
 const LoginForm = () => {
-  const [username, setUsername] = useState<string>("");
-  const [password, setPassword] = useState<string>("");
+  const router = useRouter();
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm({
+    defaultValues: {
+      username: "",
+      password: "",
+    },
+    resolver: zodResolver(LoginSchema),
+  });
 
   const loginMutation = useMutation({
     mutationFn: (payload: any) => ProfileServices.login(payload),
-    onSuccess: () => {
-      console.log("loggedin");
+    onSuccess: (response: any) => {
+      setLocalValue("jwt", response.jwt);
+      router.push("/");
+    },
+    onError: (error: any) => {
+      // Handle API request errors (e.g., display error message)
+      console.error("Login error:", error);
+      // You can also handle specific error messages from API response here if needed
     },
   });
 
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    const userData = {
-      username,
-      password,
-    };
-    loginMutation.mutate(userData);
+  const handleLogin = (data: any) => {
+    // Clear previous errors
+    loginMutation.reset();
 
-    console.log(userData);
+    // Mutate with user data
+    loginMutation.mutate(data);
   };
 
   return (
     <div className="max-w-md mx-auto mt-10 p-5 bg-white rounded shadow-md">
-      <form onSubmit={handleSubmit}>
+      <form onSubmit={handleSubmit(handleLogin)}>
         <div className="mb-4">
           <label
             className="block text-gray-700 text-sm font-bold mb-2"
@@ -40,10 +66,16 @@ const LoginForm = () => {
             placeholder="Enter username"
             type="text"
             id="username"
-            value={username}
-            onChange={(e) => setUsername(e.target.value)}
-            className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+            {...register("username")}
+            className={`shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline ${
+              errors?.username ? "border-red-500" : ""
+            }`}
           />
+          {errors?.username && (
+            <p className="text-red-500 text-sm mt-1">
+              {errors?.username.message}
+            </p>
+          )}
         </div>
         <div className="mb-4">
           <label
@@ -56,20 +88,27 @@ const LoginForm = () => {
             placeholder="Enter password"
             type="password"
             id="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+            {...register("password")}
+            className={`shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline ${
+              errors?.password ? "border-red-500" : ""
+            }`}
           />
+          {errors?.password && (
+            <p className="text-red-500 text-sm mt-1">
+              {errors?.password.message}
+            </p>
+          )}
         </div>
         <button
+          disabled={loginMutation.isPending}
           type="submit"
           className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
         >
-          Login
+          {loginMutation.isPending ? "Logging in..." : "Login"}
         </button>
       </form>
       <div className="mt-4">
-        <Link href="register">
+        <Link href="/register">
           <p className="text-blue-500 hover:underline">
             Click Here To Register
           </p>
