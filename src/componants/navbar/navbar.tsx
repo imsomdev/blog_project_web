@@ -1,15 +1,11 @@
 "use client";
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import Link from "next/link";
-import { getLocalValue } from "@/utils/auth";
+import { useToken } from "@/context/TokenContext";
 
 const Navbar: React.FC = () => {
-  const [token, setToken] = useState<string | null>(null);
-
-  useEffect(() => {
-    setToken(getLocalValue("jwt"));
-  }, []);
-
+  const { token, setToken } = useToken();
+  console.log(token, "TOKENN");
   const logout = () => {
     localStorage.removeItem("jwt");
     setToken(null);
@@ -32,13 +28,9 @@ const Navbar: React.FC = () => {
             Services
           </Link>
           {token ? (
-            <Link
-              href="/"
-              className="text-gray-300 hover:text-white"
-              onClick={logout}
-            >
+            <button onClick={logout} className="text-gray-300 hover:text-white">
               Logout
-            </Link>
+            </button>
           ) : (
             <Link href="/login" className="text-gray-300 hover:text-white">
               Login

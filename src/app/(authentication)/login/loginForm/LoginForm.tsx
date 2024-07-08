@@ -1,6 +1,5 @@
 "use client";
 import ProfileServices from "@/services/profile.services";
-import { setLocalValue } from "@/utils/auth";
 import { useMutation } from "@tanstack/react-query";
 import Link from "next/link";
 import React from "react";
@@ -8,6 +7,8 @@ import { useForm } from "react-hook-form";
 import * as z from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
+import { setLocalValue } from "@/utils/localStorage.utils";
+import { useToken } from "@/context/TokenContext";
 
 const LoginSchema = z.object({
   username: z.string().min(1, { message: "Username is required" }).trim(),
@@ -19,6 +20,7 @@ const LoginSchema = z.object({
 
 const LoginForm = () => {
   const router = useRouter();
+  const { token, setToken } = useToken();
   const {
     register,
     handleSubmit,
@@ -34,21 +36,18 @@ const LoginForm = () => {
   const loginMutation = useMutation({
     mutationFn: (payload: any) => ProfileServices.login(payload),
     onSuccess: (response: any) => {
-      setLocalValue("jwt", response.jwt);
+      const jwtToken = response.jwt;
+      setLocalValue("jwt", jwtToken);
+      setToken(jwtToken);
       router.push("/");
     },
     onError: (error: any) => {
-      // Handle API request errors (e.g., display error message)
       console.error("Login error:", error);
-      // You can also handle specific error messages from API response here if needed
     },
   });
 
   const handleLogin = (data: any) => {
-    // Clear previous errors
     loginMutation.reset();
-
-    // Mutate with user data
     loginMutation.mutate(data);
   };
 
