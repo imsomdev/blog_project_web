@@ -12,7 +12,7 @@ export const TokenProvider: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
   const [token, setToken] = useState<string | null>(() => {
-    return localStorage.getItem("jwt");
+    return typeof window !== "undefined" ? localStorage.getItem("jwt") : null;
   });
 
   const updateToken = (newToken: string | null) => {

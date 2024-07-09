@@ -3,5 +3,7 @@ export const setLocalValue = (key: string, value: any) => {
 };
 
 export const getLocalValue = (key: string) => {
-  return JSON.parse(localStorage.getItem(key)!);
+  return (
+    typeof window !== "undefined" && JSON.parse(localStorage.getItem(key)!)
+  );
 };

@@ -19,5 +19,37 @@ const ContentServices = {
       throw new Error("Something went wrong. Please try again.");
     }
   },
+  async getPostById(post_id: string) {
+    const token = localStorage.getItem("jwt");
+    try {
+      const response = await axios.get(`blog-posts/${post_id}`, {
+        headers: {
+          Authorization: "Bearer " + token,
+        },
+      });
+      return response.data;
+    } catch (error: any) {
+      if (isAxiosError(error)) {
+        throw new Error(error.response?.data.message);
+      }
+      throw new Error("Something went wrong. Please try again.");
+    }
+  },
+  async getAllPost() {
+    const token = localStorage.getItem("jwt");
+    try {
+      const response = await axios.get("blog-posts", {
+        headers: {
+          Authorization: "Bearer " + token,
+        },
+      });
+      return response.data;
+    } catch (error: any) {
+      if (isAxiosError(error)) {
+        throw new Error(error.response?.data.message);
+      }
+      throw new Error("Something went wrong. Please try again.");
+    }
+  },
 };
 export default ContentServices;

@@ -20,6 +20,7 @@ const ProfileServices = {
       const response = await axios.post("login", {
         ...userData,
       });
+      console.log(response.data);
       return response.data;
       //   console.log(response.data, "RESPONSE");
       //   return response.data;

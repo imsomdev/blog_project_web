@@ -37,7 +37,7 @@ const LoginForm = () => {
     mutationFn: (payload: any) => ProfileServices.login(payload),
     onSuccess: (response: any) => {
       const jwtToken = response.jwt;
-      setLocalValue("jwt", jwtToken);
+      setLocalValue("userDetails", response);
       setToken(jwtToken);
       router.push("/");
     },

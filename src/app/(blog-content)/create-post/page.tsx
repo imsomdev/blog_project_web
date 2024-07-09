@@ -3,15 +3,17 @@ import ContentServices from "@/services/content.services";
 import { useMutation } from "@tanstack/react-query";
 import React, { useState } from "react";
 import Tags from "../../../componants/tags/tags";
+import { useRouter } from "next/navigation";
 
 const CreatePost = () => {
   const [title, setTitle] = useState<string>("");
   const [content, setContent] = useState<string>("");
+  const router = useRouter();
 
   const createPostMutation = useMutation({
     mutationFn: (payload: any) => ContentServices.createPost(payload),
     onSuccess: (response: any) => {
-      console.log(response);
+      router.push("/");
     },
     onError: (error: any) => {
       console.error("Create post error:", error);
