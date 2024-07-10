@@ -95,7 +95,7 @@ const BlogNavbar: React.FC = () => {
             ) : (
               <DropdownMenu aria-label="Profile Actions" variant="flat">
                 <DropdownItem key="profile" className="h-14 gap-2">
-                  <Link href="login" aria-current="page" color="secondary">
+                  <Link href="/login" aria-current="page" color="secondary">
                     Register/ Login
                   </Link>
                 </DropdownItem>

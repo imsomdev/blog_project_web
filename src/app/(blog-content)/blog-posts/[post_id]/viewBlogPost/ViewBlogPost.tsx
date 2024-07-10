@@ -1,4 +1,6 @@
 "use client";
+import DeletePost from "@/componants/deletePost/DeletePost";
+import EditPost from "@/componants/editPost/EditPost";
 import ContentServices from "@/services/content.services";
 import { useQuery } from "@tanstack/react-query";
 import React from "react";
@@ -32,6 +34,9 @@ const ViewBlogPost = ({ params }: BlogPostInterface) => {
       {data?.tags.map((item: any) => (
         <span key={item.id}>{item.name}, </span>
       ))}
+      <p>Author: {data?.author}</p>
+      <EditPost postId={params.post_id} data={data} />
+      {data && <DeletePost postId={params.post_id} data={data} />}
     </div>
   );
 };

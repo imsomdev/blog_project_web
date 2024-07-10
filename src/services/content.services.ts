@@ -51,5 +51,21 @@ const ContentServices = {
       throw new Error("Something went wrong. Please try again.");
     }
   },
+  async deletePostById(post_id: string) {
+    const token = localStorage.getItem("jwt");
+    try {
+      const response = await axios.delete(`blog-posts/${post_id}`, {
+        headers: {
+          Authorization: "Bearer " + token,
+        },
+      });
+      return response.data;
+    } catch (error: any) {
+      if (isAxiosError(error)) {
+        throw new Error(error.response?.data.message);
+      }
+      throw new Error("Something went wrong. Please try again.");
+    }
+  },
 };
 export default ContentServices;
