@@ -50,8 +50,12 @@ const BlogNavbar: React.FC = () => {
             </Link>
           </NavbarItem>
           <NavbarItem isActive>
-            <Link href="#" aria-current="page" color="secondary">
-              Customers
+            <Link
+              href="/create-post"
+              aria-current="page"
+              className="bg-blue-700"
+            >
+              Create post
             </Link>
           </NavbarItem>
           <NavbarItem>
