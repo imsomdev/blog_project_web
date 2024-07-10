@@ -4,10 +4,13 @@ import { useMutation } from "@tanstack/react-query";
 import React, { useState } from "react";
 import Tags from "../../../componants/tags/tags";
 import { useRouter } from "next/navigation";
+import { Input, Textarea } from "@nextui-org/react";
 
 const CreatePost = () => {
   const [title, setTitle] = useState<string>("");
   const [content, setContent] = useState<string>("");
+  const [selectedTagIds, setSelectedTagIds] = useState<string>("");
+
   const router = useRouter();
 
   const createPostMutation = useMutation({
@@ -20,48 +23,59 @@ const CreatePost = () => {
     },
   });
 
-  // const handleTagsSelection = (selectedTags: string) => {
-  //   console.log("Selected tags:", selectedTags);
-  // };
-
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
     const formData = new FormData();
     formData.append("title", title);
     formData.append("content", content);
-    formData.append("tags", "1, 2");
+    formData.append("tags", selectedTagIds);
 
     console.log(formData);
     createPostMutation.mutate(formData);
   };
+  console.log(selectedTagIds, "tags");
 
   return (
-    <form onSubmit={handleSubmit}>
-      <div>
-        <label htmlFor="title">Title:</label>
-        <input
-          type="text"
-          id="title"
-          value={title}
-          onChange={(e) => {
-            setTitle(e.target.value);
-          }}
-        />
-      </div>
-      <div>
-        <label htmlFor="content">Content:</label>
-        <textarea
-          id="content"
-          value={content}
-          onChange={(e) => {
-            setContent(e.target.value);
-          }}
-        ></textarea>
-      </div>
-      {/* <Tags onSelectTags={handleTagsSelection} /> */}
-      <button type="submit">Submit</button>
-    </form>
+    <div className="min-h-screen flex items-center justify-center">
+      <form
+        onSubmit={handleSubmit}
+        className=" bg-white p-8 rounded shadow-md w-full max-w-2xl h-[35rem]"
+      >
+        <div className="mb-4">
+          <label
+            htmlFor="title"
+            className="block text-sm font-medium text-gray-700"
+          >
+            Title
+          </label>
+          <Input
+            type="text"
+            id="title"
+            placeholder="Enter your title"
+            value={title}
+            onChange={(e) => setTitle(e.target.value)}
+          />
+        </div>
+        <div className="mb-4 w-full flex flex-col gap-2">
+          <Textarea
+            variant="underlined"
+            label="Content"
+            labelPlacement="outside"
+            placeholder="Write your content"
+            value={content}
+            onChange={(e) => setContent(e.target.value)}
+          />
+        </div>
+        <Tags setSelectedTagIds={setSelectedTagIds} />
+        <button
+          type="submit"
+          className="bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-700 transition duration-200"
+        >
+          Submit
+        </button>
+      </form>
+    </div>
   );
 };
 

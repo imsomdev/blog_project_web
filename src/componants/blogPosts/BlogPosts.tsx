@@ -13,11 +13,12 @@ const BlogPosts = () => {
   const { data, isLoading, isError, error } = useQuery({
     queryKey: ["blog-posts", token],
     queryFn: () => token && ContentServices.getAllPost(),
-    // retry: 1,
+    retry: 1,
     refetchOnWindowFocus: false,
   });
 
   if (isLoading) return <div>Loading...</div>;
+  if (isError) return <div>Something went worng</div>;
 
   const handleReadPost = (id: string) => {
     router.push(`/blog-posts/${id}`);
@@ -28,7 +29,7 @@ const BlogPosts = () => {
       <div className="container mx-auto p-4">
         <h1 className="text-3xl font-bold text-center mb-8">Blog Posts</h1>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {data.map((post: any) => (
+          {data?.map((post: any) => (
             <div key={post.id} className="bg-white rounded-lg shadow-md p-6">
               <h2 className="text-2xl font-semibold mb-4">{post.title}</h2>
               <p className="text-gray-700 mb-4">{post.excerpt}</p>

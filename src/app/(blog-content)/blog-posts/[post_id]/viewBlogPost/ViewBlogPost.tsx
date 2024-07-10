@@ -28,6 +28,10 @@ const ViewBlogPost = ({ params }: BlogPostInterface) => {
     <div>
       <h1>{data?.title}</h1>
       <p>{data?.content}</p>
+      Tags:{" "}
+      {data?.tags.map((item: any) => (
+        <span key={item.id}>{item.name}, </span>
+      ))}
     </div>
   );
 };
