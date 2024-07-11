@@ -1,0 +1,52 @@
+.gridContainer {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 20px;
+  max-width: 800px;
+  margin: 40px auto;
+  padding: 20px;
+  background-color: #f7f7f7;
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.blogPostContent {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 20px;
+}
+
+.blogPostContent h1 {
+  font-size: 24px;
+  margin-bottom: 10px;
+}
+
+.blogPostContent p {
+  margin-bottom: 20px;
+}
+
+.blogPostContent span {
+  font-size: 16px;
+  color: #666;
+  margin-right: 10px;
+}
+
+.blogPostContent .tags {
+  font-size: 14px;
+  color: #999;
+  margin-bottom: 10px;
+}
+
+.author {
+  font-size: 16px;
+  color: #666;
+  margin-bottom: 20px;
+}
+.editDeleteBtns {
+  display: flex;
+  padding: auto;
+  justify-content: space-between;
+  margin-top: 20px;
+}
