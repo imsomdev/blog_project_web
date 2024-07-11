@@ -35,7 +35,7 @@ const ViewBlogPost = ({ params }: BlogPostInterface) => {
         <span key={item.id}>{item.name}, </span>
       ))}
       <p>Author: {data?.author}</p>
-      <EditPost postId={params.post_id} data={data} />
+      {data && <EditPost postId={params.post_id} data={data} />}
       {data && <DeletePost postId={params.post_id} data={data} />}
     </div>
   );

@@ -51,6 +51,22 @@ const ContentServices = {
       throw new Error("Something went wrong. Please try again.");
     }
   },
+  async editPostById(post_id: string, data: FormData) {
+    const token = localStorage.getItem("jwt");
+    try {
+      const response = await axios.put(`blog-posts/${post_id}`, data, {
+        headers: {
+          Authorization: "Bearer " + token,
+        },
+      });
+      return response.data;
+    } catch (error: any) {
+      if (isAxiosError(error)) {
+        throw new Error(error.response?.data.message);
+      }
+      throw new Error("Something went wrong. Please try again.");
+    }
+  },
   async deletePostById(post_id: string) {
     const token = localStorage.getItem("jwt");
     try {

@@ -7,13 +7,17 @@ import {
   Button,
 } from "@nextui-org/react";
 import { TAGS } from "@/utils/constants.utils";
+interface tagInterface {
+  setSelectedTagIds: any;
+  setSelectedKeys: any;
+  selectedKeys: any;
+}
 
-const Tags = ({ setSelectedTagIds }: any) => {
-  const [selectedKeys, setSelectedKeys] = useState<Set<string>>(
-    new Set<string>()
-  );
-  // const [selectedTagIds, setSelectedTagIds] = useState<string>("");
-
+const Tags = ({
+  setSelectedTagIds,
+  setSelectedKeys,
+  selectedKeys,
+}: tagInterface) => {
   const selectedValue = useMemo(
     () => Array.from(selectedKeys).join(", ").replaceAll("_", " "),
     [selectedKeys]
@@ -31,6 +35,7 @@ const Tags = ({ setSelectedTagIds }: any) => {
     setSelectedKeys(new Set(keys));
     setSelectedTagIds(selectedTagIds);
   };
+  console.log(selectedKeys, "TAGS");
 
   return (
     <Dropdown>

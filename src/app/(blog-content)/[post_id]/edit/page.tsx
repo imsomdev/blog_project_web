@@ -1,28 +1,63 @@
 "use client";
 import ContentServices from "@/services/content.services";
-import { useMutation } from "@tanstack/react-query";
-import React, { useState } from "react";
-import Tags from "../../../componants/tags/tags";
-import { useRouter } from "next/navigation";
+import { useMutation, useQuery } from "@tanstack/react-query";
+import React, { useEffect, useState } from "react";
 import { Input, Textarea } from "@nextui-org/react";
+import Tags from "@/componants/tags/tags";
+import { useRouter } from "next/navigation";
+import { TAGS } from "@/utils/constants.utils";
 
-const CreatePost = () => {
+const EditPost = ({ params }: { params: { post_id: string } }) => {
   const [title, setTitle] = useState<string>("");
   const [content, setContent] = useState<string>("");
   const [selectedKeys, setSelectedKeys] = useState<Set<string>>(
     new Set<string>()
   );
   const [selectedTagIds, setSelectedTagIds] = useState<string>("");
-
   const router = useRouter();
+  const { data, isLoading, isError, error } = useQuery({
+    queryKey: ["blog-post-view", params.post_id],
+    queryFn: () => ContentServices.getPostById(params.post_id),
+  });
 
-  const createPostMutation = useMutation({
-    mutationFn: (payload: any) => ContentServices.createPost(payload),
+  const handleSelectionChange = (keys: any) => {
+    const selectedTagIds = Array.from(keys)
+      .map((key) => {
+        const tag = TAGS.find((tag) => tag.name === key);
+        return tag ? tag.id : null;
+      })
+      .filter((id) => id !== null)
+      .join(",");
+    setSelectedTagIds(selectedTagIds);
+  };
+
+  useEffect(() => {
+    if (data) {
+      setTitle(data.title);
+      setContent(data.content);
+      setSelectedKeys(new Set(data.tags.map((tag: any) => tag.name)));
+      console.log(selectedKeys, "🐱‍👤");
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [data]);
+  useEffect(() => {
+    selectedKeys && handleSelectionChange(selectedKeys);
+    console.log(selectedKeys, "KEYS");
+  }, [selectedKeys]);
+
+  const editPostMutation = useMutation({
+    mutationFn: ({
+      postId,
+      formData,
+    }: {
+      postId: string;
+      formData: FormData;
+    }) => ContentServices.editPostById(postId, formData),
     onSuccess: (response: any) => {
       router.push("/");
     },
     onError: (error: any) => {
-      console.error("Create post error:", error);
+      console.error("Edit post error:", error);
     },
   });
 
@@ -34,10 +69,9 @@ const CreatePost = () => {
     formData.append("content", content);
     formData.append("tags", selectedTagIds);
 
-    console.log(formData);
-    createPostMutation.mutate(formData);
+    editPostMutation.mutate({ postId: params.post_id, formData });
   };
-  console.log(selectedTagIds, "tags");
+  // console.log(selectedKeys, "edit");
 
   return (
     <div className="min-h-screen flex items-center justify-center">
@@ -86,4 +120,4 @@ const CreatePost = () => {
   );
 };
 
-export default CreatePost;
+export default EditPost;
