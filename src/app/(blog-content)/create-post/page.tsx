@@ -5,6 +5,7 @@ import React, { useState } from "react";
 import Tags from "../../../componants/tags/tags";
 import { useRouter } from "next/navigation";
 import { Input, Textarea } from "@nextui-org/react";
+import toast from "react-hot-toast";
 
 const CreatePost = () => {
   const [title, setTitle] = useState<string>("");
@@ -19,10 +20,11 @@ const CreatePost = () => {
   const createPostMutation = useMutation({
     mutationFn: (payload: any) => ContentServices.createPost(payload),
     onSuccess: (response: any) => {
+      toast.success("Successfully posted!");
       router.push("/");
     },
     onError: (error: any) => {
-      console.error("Create post error:", error);
+      toast.error("Something went wrong, please try again!");
     },
   });
 
@@ -59,8 +61,6 @@ const CreatePost = () => {
             value={title}
             onChange={(e) => setTitle(e.target.value)}
           />
-        </div>
-        <div className="mb-4 w-full flex flex-col gap-2">
           <Textarea
             variant="underlined"
             label="Content"
@@ -70,11 +70,14 @@ const CreatePost = () => {
             onChange={(e) => setContent(e.target.value)}
           />
         </div>
-        <Tags
-          setSelectedTagIds={setSelectedTagIds}
-          selectedKeys={selectedKeys}
-          setSelectedKeys={setSelectedKeys}
-        />
+        <div className="mb-4 w-full flex flex-col gap-2">
+          <Tags
+            setSelectedTagIds={setSelectedTagIds}
+            selectedKeys={selectedKeys}
+            setSelectedKeys={setSelectedKeys}
+          />
+        </div>
+
         <button
           type="submit"
           className="bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-700 transition duration-200"

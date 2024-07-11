@@ -6,6 +6,7 @@ import { Input, Textarea } from "@nextui-org/react";
 import Tags from "@/componants/tags/tags";
 import { useRouter } from "next/navigation";
 import { TAGS } from "@/utils/constants.utils";
+import toast from "react-hot-toast";
 
 const EditPost = ({ params }: { params: { post_id: string } }) => {
   const [title, setTitle] = useState<string>("");
@@ -54,10 +55,12 @@ const EditPost = ({ params }: { params: { post_id: string } }) => {
       formData: FormData;
     }) => ContentServices.editPostById(postId, formData),
     onSuccess: (response: any) => {
+      toast.success("Post Edited!");
+
       router.push("/");
     },
     onError: (error: any) => {
-      console.error("Edit post error:", error);
+      toast.error("Something went wrong, Please try again!!");
     },
   });
 

@@ -9,6 +9,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
 import { setLocalValue } from "@/utils/localStorage.utils";
 import { useToken } from "@/context/TokenContext";
+import toast from "react-hot-toast";
 
 const LoginSchema = z.object({
   username: z.string().min(1, { message: "Username is required" }).trim(),
@@ -39,10 +40,11 @@ const LoginForm = () => {
       const jwtToken = response.jwt;
       setLocalValue("userDetails", response);
       setToken(jwtToken);
+      toast.success("Successfully logged in!");
       router.push("/");
     },
-    onError: (error: any) => {
-      console.error("Login error:", error);
+    onError: () => {
+      toast.error(`Login failed! Please check your credentials.`);
     },
   });
 

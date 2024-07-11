@@ -4,6 +4,7 @@ import "./globals.css";
 import ReactQueryProvider from "../providers/ReactQueryProvider";
 import Navbar from "@/componants/navbar/navbar";
 import { TokenProvider } from "@/context/TokenContext";
+import { Toaster } from "react-hot-toast";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -23,6 +24,7 @@ export default function RootLayout({
         <TokenProvider>
           <ReactQueryProvider>
             <Navbar />
+            <Toaster position="bottom-center" reverseOrder={false} />
             {children}
           </ReactQueryProvider>
         </TokenProvider>

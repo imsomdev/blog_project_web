@@ -4,6 +4,7 @@ import { Button } from "@nextui-org/react";
 import { useMutation } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
 import React from "react";
+import { toast } from "react-hot-toast";
 import { MdDeleteForever } from "react-icons/md";
 
 const DeletePost = ({ postId, data }: any) => {
@@ -12,11 +13,11 @@ const DeletePost = ({ postId, data }: any) => {
   const deleteMutation = useMutation({
     mutationFn: (payload: any) => ContentServices.deletePostById(payload),
     onSuccess: () => {
-      console.log("Post deleted successfully");
+      toast.success("Post deleted successfully!");
       router.push("/");
     },
     onError: () => {
-      console.error("Failed to delete post");
+      toast.error("Something went wrong, Please try again!!");
     },
   });
   const handleOnClick = () => {

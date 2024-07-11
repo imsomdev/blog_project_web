@@ -17,13 +17,8 @@ import { getLocalValue } from "@/utils/localStorage.utils";
 
 const BlogNavbar: React.FC = () => {
   const { token, setToken } = useToken();
-  const [isClient, setIsClient] = useState(false);
   const userName = getLocalValue("userDetails")?.username;
   console.log(userName);
-
-  useEffect(() => {
-    setIsClient(true);
-  }, []);
 
   const logout = () => {
     if (typeof window !== "undefined") {
@@ -32,15 +27,13 @@ const BlogNavbar: React.FC = () => {
     }
   };
 
-  if (!isClient) {
-    return null;
-  }
-
   return (
     <>
       <Navbar>
         <NavbarBrand>
-          <p className="font-bold text-inherit">YouBlog</p>
+          <Link className="font-bold text-inherit" href="/">
+            YouBlog
+          </Link>
         </NavbarBrand>
 
         <NavbarContent className="sm:flex gap-4" justify="center">
@@ -75,7 +68,7 @@ const BlogNavbar: React.FC = () => {
                 color="secondary"
                 name="Jason Hughes"
                 size="sm"
-                src="https://i.pravatar.cc/150?u=a042581f4e29026704d"
+                // src="https://i.pravatar.cc/150?u=a042581f4e29026704d"
               />
             </DropdownTrigger>
             {token ? (
