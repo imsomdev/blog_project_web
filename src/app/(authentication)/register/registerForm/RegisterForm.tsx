@@ -6,6 +6,8 @@ import React from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
+import toast from "react-hot-toast";
+import { useRouter } from "next/navigation";
 
 const registerSchema = z.object({
   username: z.string().min(1, { message: "Username is required" }).trim(),
@@ -17,6 +19,7 @@ const registerSchema = z.object({
 });
 
 const RegisterForm = () => {
+  const router = useRouter();
   const {
     register,
     handleSubmit,
@@ -33,8 +36,12 @@ const RegisterForm = () => {
   const registerMutation = useMutation({
     mutationFn: (payload) => ProfileServices.register(payload),
     onSuccess: () => {
-      // Handle success (e.g., show success message, redirect to login page)
-      console.log("User registered successfully");
+      toast.success("Registered Successfully, Login now!");
+      router.push("/login");
+    },
+    onError: (error) => {
+      toast.error("Registration failed, please try again!");
+      console.error("Registration error:", error);
     },
   });
 
