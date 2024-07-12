@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect, useState } from "react";
+import React, { useState, useCallback } from "react";
 import { useToken } from "@/context/TokenContext";
 import {
   Navbar,
@@ -12,11 +12,17 @@ import {
   Dropdown,
   DropdownMenu,
   Avatar,
+  Input,
 } from "@nextui-org/react";
 import { getLocalValue } from "@/utils/localStorage.utils";
+import { GrSearch } from "react-icons/gr";
+import { useRouter } from "next/navigation";
+import _ from "lodash";
 
 const BlogNavbar: React.FC = () => {
   const { token, setToken } = useToken();
+  const router = useRouter();
+  const [searchTerm, setSearchTerm] = useState<string>("");
   const userName = getLocalValue("userDetails")?.username;
   console.log(userName);
 
@@ -26,6 +32,22 @@ const BlogNavbar: React.FC = () => {
       setToken(null);
     }
   };
+  const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const newSearchTerm = e.target.value;
+    setSearchTerm(newSearchTerm);
+    debouncedSearch(newSearchTerm);
+  };
+
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  const debouncedSearch = useCallback(
+    _.debounce((searchTerm: string) => {
+      const param = new URLSearchParams(window.location.search);
+      param.set("search", searchTerm);
+      router.replace(`/?${param.toString()}`);
+    }, 500),
+    []
+  );
+  console.log(searchTerm);
 
   return (
     <>
@@ -59,6 +81,23 @@ const BlogNavbar: React.FC = () => {
         </NavbarContent>
 
         <NavbarContent as="div" justify="end">
+          <div>
+            <Input
+              classNames={{
+                base: "max-w-full sm:max-w-[10rem] h-10",
+                mainWrapper: "h-full",
+                input: "text-small",
+                inputWrapper:
+                  "h-full font-normal text-default-500 bg-default-400/20 dark:bg-default-500/20",
+              }}
+              placeholder="Type to search..."
+              size="sm"
+              startContent={<GrSearch size={18} />}
+              type="search"
+              value={searchTerm}
+              onChange={handleSearch}
+            />
+          </div>
           <Dropdown placement="bottom-end">
             <DropdownTrigger>
               <Avatar

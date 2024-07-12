@@ -2,18 +2,25 @@
 import { useToken } from "@/context/TokenContext";
 import ContentServices from "@/services/content.services";
 import { useQuery } from "@tanstack/react-query";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import LoadingSpinner from "../loadingSpinner/LoadingSpinner";
 import { Card, CardHeader, CardFooter, Image, Button } from "@nextui-org/react";
 import styles from "./BlogPosts.module.css";
+import { debounce } from "lodash";
 
 const BlogPosts = () => {
   const router = useRouter();
   const { token } = useToken();
+  const searchParams = useSearchParams();
+  const searchTerm = searchParams.get("search");
 
   const { data, isLoading, isError, error } = useQuery({
-    queryKey: ["blog-posts", token],
-    queryFn: () => token && ContentServices.getAllPost(),
+    queryKey: ["blog-posts", token, searchTerm],
+    queryFn: () =>
+      token &&
+      (searchTerm
+        ? ContentServices.searchPosts(searchTerm)
+        : ContentServices.getAllPost()),
     retry: 1,
     refetchOnWindowFocus: false,
   });
@@ -24,12 +31,17 @@ const BlogPosts = () => {
         <LoadingSpinner />
       </div>
     );
-  if (isError) return <div>Something went worng</div>;
+  if (isError)
+    return searchTerm ? (
+      <div>No result found</div>
+    ) : (
+      <div>Something went worng</div>
+    );
 
   const handleReadPost = (id: string) => {
     router.push(`/blog-posts/${id}`);
   };
-  console.log(data, "BLOGPOST");
+  console.log(searchTerm, "Search Term From Main Page");
 
   return (
     token && (

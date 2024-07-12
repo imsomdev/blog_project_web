@@ -83,5 +83,22 @@ const ContentServices = {
       throw new Error("Something went wrong. Please try again.");
     }
   },
+  async searchPosts(searchTerm: string) {
+    const token = localStorage.getItem("jwt");
+    console.log(searchTerm, "FROM SERVICES");
+    try {
+      const response = await axios.get(`search?search=${searchTerm}`, {
+        headers: {
+          Authorization: "Bearer " + token,
+        },
+      });
+      return response.data;
+    } catch (error: any) {
+      if (isAxiosError(error)) {
+        throw new Error(error.response?.data.message);
+      }
+      throw new Error("Something went wrong. Please try again.");
+    }
+  },
 };
 export default ContentServices;
