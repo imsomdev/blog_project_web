@@ -13,17 +13,22 @@ import {
   DropdownMenu,
   Avatar,
   Input,
+  useDisclosure,
+  Modal,
 } from "@nextui-org/react";
 import { getLocalValue } from "@/utils/localStorage.utils";
 import { GrSearch } from "react-icons/gr";
 import { useRouter } from "next/navigation";
 import _ from "lodash";
+import Poll from "../poll/Poll";
 
 const BlogNavbar: React.FC = () => {
   const { token, setToken } = useToken();
   const router = useRouter();
   const [searchTerm, setSearchTerm] = useState<string>("");
   const userName = getLocalValue("userDetails")?.username;
+  const { onClose, isOpen, onOpen, onOpenChange } = useDisclosure();
+
   console.log(userName);
 
   const logout = () => {
@@ -47,7 +52,14 @@ const BlogNavbar: React.FC = () => {
     }, 500),
     []
   );
-  console.log(searchTerm);
+
+  const handleRecentPost = () => {
+    // console.log("recent post received");
+    const param = new URLSearchParams(window.location.search);
+    param.set("recent-post", "true");
+    router.replace(`/?${param.toString()}`);
+  };
+  console.log(isOpen, "MODAL open");
 
   return (
     <>
@@ -60,9 +72,16 @@ const BlogNavbar: React.FC = () => {
 
         <NavbarContent className="sm:flex gap-4" justify="center">
           <NavbarItem>
-            <Link color="foreground" href="#">
-              Features
-            </Link>
+            <button color="foreground" onClick={onOpen}>
+              {`Today's Poll`}
+            </button>
+            <Modal
+              backdrop={"blur"}
+              isOpen={isOpen}
+              onOpenChange={onOpenChange}
+            >
+              <Poll onClose={onClose} />
+            </Modal>
           </NavbarItem>
           <NavbarItem isActive>
             <Link
@@ -74,9 +93,9 @@ const BlogNavbar: React.FC = () => {
             </Link>
           </NavbarItem>
           <NavbarItem>
-            <Link color="foreground" href="#">
-              Integrations
-            </Link>
+            <button color="foreground" onClick={handleRecentPost}>
+              Recent Posts
+            </button>
           </NavbarItem>
         </NavbarContent>
 

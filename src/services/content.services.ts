@@ -100,5 +100,70 @@ const ContentServices = {
       throw new Error("Something went wrong. Please try again.");
     }
   },
+  async getRecentPost() {
+    const token = localStorage.getItem("jwt");
+    try {
+      const response = await axios.get("recent-posts", {
+        headers: {
+          Authorization: "Bearer " + token,
+        },
+      });
+      return response.data;
+    } catch (error: any) {
+      if (isAxiosError(error)) {
+        throw new Error(error.response?.data.message);
+      }
+      throw new Error("Something went wrong. Please try again.");
+    }
+  },
+  async gePollDetails() {
+    const token = localStorage.getItem("jwt");
+    try {
+      const response = await axios.get("polls", {
+        headers: {
+          Authorization: "Bearer " + token,
+        },
+      });
+      const data = response.data;
+      return data?.[data.length - 1];
+    } catch (error: any) {
+      if (isAxiosError(error)) {
+        throw new Error(error.response?.data.message);
+      }
+      throw new Error("Something went wrong. Please try again.");
+    }
+  },
+  async submitPollDetails(payload: any) {
+    const token = localStorage.getItem("jwt");
+    try {
+      const response = await axios.post("polls", payload, {
+        headers: {
+          Authorization: "Bearer " + token,
+        },
+      });
+      return response.data;
+    } catch (error: any) {
+      if (isAxiosError(error)) {
+        throw new Error(error.response?.data.message);
+      }
+      throw new Error("Something went wrong. Please try again.");
+    }
+  },
+  async pollsResult(ques_id: any) {
+    const token = localStorage.getItem("jwt");
+    try {
+      const response = await axios.post("polls-result", ques_id, {
+        headers: {
+          Authorization: "Bearer " + token,
+        },
+      });
+      return response.data;
+    } catch (error: any) {
+      if (isAxiosError(error)) {
+        throw new Error(error.response?.data.message);
+      }
+      throw new Error("Something went wrong. Please try again.");
+    }
+  },
 };
 export default ContentServices;
