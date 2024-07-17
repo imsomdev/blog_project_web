@@ -27,7 +27,7 @@ const ViewBlogPost = ({ params }: BlogPostInterface) => {
   }
 
   if (isError) {
-    return <div className="styles.error-message">Error: {error.message}</div>;
+    return <div>Error: {error.message}</div>;
   }
 
   return (

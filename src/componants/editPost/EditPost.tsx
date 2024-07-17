@@ -13,7 +13,7 @@ export default function EditPost({ postId, data }: any) {
     <div className="flex gap-4 items-center">
       <Button
         isIconOnly
-        color="danger"
+        color="primary"
         aria-label="Like"
         onClick={handleOnClick}
       >

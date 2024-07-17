@@ -11,8 +11,6 @@ import {
 } from "@nextui-org/react";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import React, { useState } from "react";
-import { MdDeleteForever } from "react-icons/md";
-import PollsResult from "./pollsResult/PollsResult";
 
 const Poll = ({ onClose }: any) => {
   const [selectedChoice, setSelectedChoice] = useState<number>(0);
