@@ -35,10 +35,10 @@ const ContentServices = {
       throw new Error("Something went wrong. Please try again.");
     }
   },
-  async getAllPost() {
+  async getAllPost(pageNumber: number) {
     const token = localStorage.getItem("jwt");
     try {
-      const response = await axios.get("blog-posts", {
+      const response = await axios.get(`blog-posts?page=${pageNumber}`, {
         headers: {
           Authorization: "Bearer " + token,
         },

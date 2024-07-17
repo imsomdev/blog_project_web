@@ -4,10 +4,17 @@ import ContentServices from "@/services/content.services";
 import { useQuery } from "@tanstack/react-query";
 import { useRouter, useSearchParams } from "next/navigation";
 import LoadingSpinner from "../loadingSpinner/LoadingSpinner";
-import { Card, CardHeader, CardFooter, Image, Button } from "@nextui-org/react";
+import {
+  Card,
+  CardHeader,
+  CardFooter,
+  Image,
+  Button,
+  Pagination,
+} from "@nextui-org/react";
 import styles from "./BlogPosts.module.css";
 import { PiEmptyDuotone } from "react-icons/pi";
-import { useState } from "react";
+import { useEffect } from "react";
 import PollModal from "../pollModal/PollModal";
 
 const BlogPosts = () => {
@@ -16,9 +23,10 @@ const BlogPosts = () => {
   const searchParams = useSearchParams();
   const searchTerm = searchParams.get("search");
   const isRecentPosts = searchParams.get("recent-post");
+  const pageNumber: string = searchParams.get("page") || "1";
 
-  const { data, isLoading, isError, error } = useQuery({
-    queryKey: ["blog-posts", token, searchTerm, isRecentPosts],
+  const { data, isLoading, isError } = useQuery({
+    queryKey: ["blog-posts", token, searchTerm, isRecentPosts, pageNumber],
     queryFn: () => {
       if (token) {
         if (searchTerm) {
@@ -26,27 +34,43 @@ const BlogPosts = () => {
         } else if (isRecentPosts === "true") {
           return ContentServices.getRecentPost();
         } else {
-          return ContentServices.getAllPost();
+          return ContentServices.getAllPost(Number(pageNumber));
         }
       }
     },
     retry: 1,
     refetchOnWindowFocus: false,
   });
-  LoadingSpinner();
-  if (isLoading)
+
+  const totalPage = data ? Math.ceil(data.count / 2) : 1;
+
+  const handleReadPost = (id: string) => {
+    router.push(`/blog-posts/${id}`);
+  };
+
+  const handlePagination = (page: number) => {
+    const param = new URLSearchParams(window.location.search);
+    param.set("page", page.toString());
+    router.replace(`/?${param.toString()}`);
+
+    // console.log(param.toString());
+  };
+  console.log(pageNumber, "pageNumber");
+
+  if (isLoading) {
     return (
       <div>
         <LoadingSpinner />
       </div>
     );
+  }
 
-  if (isError)
+  if (isError) {
     return searchTerm ? (
       <div className="fixed top-0 left-0 w-full h-full flex justify-center items-center">
         <div className="flex items-center space-x-2">
           <PiEmptyDuotone className="h-6 w-6" />
-          <span> No results found</span>
+          <span>No results found</span>
         </div>
       </div>
     ) : (
@@ -54,16 +78,12 @@ const BlogPosts = () => {
         <div className="text-center">Something went wrong</div>
       </div>
     );
-
-  const handleReadPost = (id: string) => {
-    router.push(`/blog-posts/${id}`);
-  };
-  console.log(isRecentPosts, "Recent_POST");
+  }
 
   return (
     token && (
       <div className={styles.gridContainer}>
-        {data?.map((post: any) => (
+        {data?.results?.map((post: any) => (
           <Card
             key={post.id}
             isFooterBlurred
@@ -82,9 +102,8 @@ const BlogPosts = () => {
             />
             <CardFooter className="absolute bg-black/40 bottom-0 z-10 border-t-1 border-default-600 dark:border-default-100">
               <div className="flex flex-grow gap-2 items-center">
-                {" "}
                 <p className="text-tiny text-white">Posted by </p>
-                <p className="text-base text-white">{post?.author}</p>
+                <p className="text-base text-white">{post.author}</p>
               </div>
               <Button
                 radius="full"
@@ -96,7 +115,19 @@ const BlogPosts = () => {
             </CardFooter>
           </Card>
         ))}
-        <PollModal />
+        {totalPage > 1 && (
+          <div>
+            <Pagination
+              loop
+              showControls
+              color="primary"
+              total={totalPage}
+              initialPage={Number(pageNumber)}
+              onChange={handlePagination}
+            />
+          </div>
+        )}
+        {/* <PollModal /> */}
       </div>
     )
   );
