@@ -6,21 +6,30 @@ import { useRouter, useSearchParams } from "next/navigation";
 import LoadingSpinner from "../loadingSpinner/LoadingSpinner";
 import { Card, CardHeader, CardFooter, Image, Button } from "@nextui-org/react";
 import styles from "./BlogPosts.module.css";
-import { debounce } from "lodash";
+import { PiEmptyDuotone } from "react-icons/pi";
+import { useState } from "react";
+import PollModal from "../pollModal/PollModal";
 
 const BlogPosts = () => {
   const router = useRouter();
   const { token } = useToken();
   const searchParams = useSearchParams();
   const searchTerm = searchParams.get("search");
+  const isRecentPosts = searchParams.get("recent-post");
 
   const { data, isLoading, isError, error } = useQuery({
-    queryKey: ["blog-posts", token, searchTerm],
-    queryFn: () =>
-      token &&
-      (searchTerm
-        ? ContentServices.searchPosts(searchTerm)
-        : ContentServices.getAllPost()),
+    queryKey: ["blog-posts", token, searchTerm, isRecentPosts],
+    queryFn: () => {
+      if (token) {
+        if (searchTerm) {
+          return ContentServices.searchPosts(searchTerm);
+        } else if (isRecentPosts === "true") {
+          return ContentServices.getRecentPost();
+        } else {
+          return ContentServices.getAllPost();
+        }
+      }
+    },
     retry: 1,
     refetchOnWindowFocus: false,
   });
@@ -31,22 +40,30 @@ const BlogPosts = () => {
         <LoadingSpinner />
       </div>
     );
+
   if (isError)
     return searchTerm ? (
-      <div>No result found</div>
+      <div className="fixed top-0 left-0 w-full h-full flex justify-center items-center">
+        <div className="flex items-center space-x-2">
+          <PiEmptyDuotone className="h-6 w-6" />
+          <span> No results found</span>
+        </div>
+      </div>
     ) : (
-      <div>Something went worng</div>
+      <div className="fixed top-0 left-0 w-full h-full flex justify-center items-center">
+        <div className="text-center">Something went wrong</div>
+      </div>
     );
 
   const handleReadPost = (id: string) => {
     router.push(`/blog-posts/${id}`);
   };
-  console.log(searchTerm, "Search Term From Main Page");
+  console.log(isRecentPosts, "Recent_POST");
 
   return (
     token && (
       <div className={styles.gridContainer}>
-        {data.map((post: any) => (
+        {data?.map((post: any) => (
           <Card
             key={post.id}
             isFooterBlurred
@@ -79,6 +96,7 @@ const BlogPosts = () => {
             </CardFooter>
           </Card>
         ))}
+        <PollModal />
       </div>
     )
   );
