@@ -30,9 +30,9 @@ const BlogPosts = () => {
     queryFn: () => {
       if (token) {
         if (searchTerm) {
-          return ContentServices.searchPosts(searchTerm);
+          return ContentServices.searchPosts(searchTerm, pageNumber);
         } else if (isRecentPosts === "true") {
-          return ContentServices.getRecentPost();
+          return ContentServices.getRecentPost(pageNumber);
         } else {
           return ContentServices.getAllPost(Number(pageNumber));
         }
@@ -55,7 +55,7 @@ const BlogPosts = () => {
 
     // console.log(param.toString());
   };
-  console.log(pageNumber, "pageNumber");
+  console.log(isRecentPosts, "isRecentPosts");
 
   if (isLoading) {
     return (

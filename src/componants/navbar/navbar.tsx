@@ -46,7 +46,7 @@ const BlogNavbar: React.FC = () => {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const debouncedSearch = useCallback(
     _.debounce((searchTerm: string) => {
-      const param = new URLSearchParams(window.location.search);
+      const param = new URLSearchParams();
       param.set("search", searchTerm);
       router.replace(`/?${param.toString()}`);
     }, 500),
@@ -54,12 +54,11 @@ const BlogNavbar: React.FC = () => {
   );
 
   const handleRecentPost = () => {
-    // console.log("recent post received");
-    const param = new URLSearchParams(window.location.search);
+    const param = new URLSearchParams();
     param.set("recent-post", "true");
-    router.replace(`/?${param.toString()}`);
+    const url = `/?${param.toString()}`;
+    router.replace(url);
   };
-  console.log(isOpen, "MODAL open");
 
   return (
     <>

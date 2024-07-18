@@ -83,15 +83,18 @@ const ContentServices = {
       throw new Error("Something went wrong. Please try again.");
     }
   },
-  async searchPosts(searchTerm: string) {
+  async searchPosts(searchTerm: string, pageNumber: string) {
     const token = localStorage.getItem("jwt");
     console.log(searchTerm, "FROM SERVICES");
     try {
-      const response = await axios.get(`search?search=${searchTerm}`, {
-        headers: {
-          Authorization: "Bearer " + token,
-        },
-      });
+      const response = await axios.get(
+        `search?search=${searchTerm}&page=${pageNumber}`,
+        {
+          headers: {
+            Authorization: "Bearer " + token,
+          },
+        }
+      );
       return response.data;
     } catch (error: any) {
       if (isAxiosError(error)) {
@@ -100,10 +103,10 @@ const ContentServices = {
       throw new Error("Something went wrong. Please try again.");
     }
   },
-  async getRecentPost() {
+  async getRecentPost(pageNumber: string) {
     const token = localStorage.getItem("jwt");
     try {
-      const response = await axios.get("recent-posts", {
+      const response = await axios.get(`recent-posts?page=${pageNumber}`, {
         headers: {
           Authorization: "Bearer " + token,
         },
