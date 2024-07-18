@@ -11,10 +11,10 @@ import {
   Image,
   Button,
   Pagination,
+  Link,
 } from "@nextui-org/react";
 import styles from "./BlogPosts.module.css";
 import { PiEmptyDuotone } from "react-icons/pi";
-import { useEffect } from "react";
 import PollModal from "../pollModal/PollModal";
 
 const BlogPosts = () => {
@@ -24,6 +24,7 @@ const BlogPosts = () => {
   const searchTerm = searchParams.get("search");
   const isRecentPosts = searchParams.get("recent-post");
   const pageNumber: string = searchParams.get("page") || "1";
+  const pageSize: number = 8;
 
   const { data, isLoading, isError } = useQuery({
     queryKey: ["blog-posts", token, searchTerm, isRecentPosts, pageNumber],
@@ -42,7 +43,7 @@ const BlogPosts = () => {
     refetchOnWindowFocus: false,
   });
 
-  const totalPage = data ? Math.ceil(data.count / 2) : 1;
+  const totalPage = data ? Math.ceil(data.count / pageSize) : 1;
 
   const handleReadPost = (id: string) => {
     router.push(`/blog-posts/${id}`);
@@ -75,7 +76,15 @@ const BlogPosts = () => {
       </div>
     ) : (
       <div className="fixed top-0 left-0 w-full h-full flex justify-center items-center">
-        <div className="text-center">Something went wrong</div>
+        <div className="text-center">
+          <Link
+            href="
+          /login"
+          >
+            Login
+          </Link>{" "}
+          to Read Posts
+        </div>
       </div>
     );
   }
@@ -116,7 +125,7 @@ const BlogPosts = () => {
           </Card>
         ))}
         {totalPage > 1 && (
-          <div>
+          <div className={styles.bottomCentered}>
             <Pagination
               loop
               showControls
