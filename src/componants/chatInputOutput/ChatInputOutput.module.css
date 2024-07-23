@@ -1,0 +1,61 @@
+.chatContainer {
+  display: flex;
+  flex-direction: column;
+  max-width: 600px;
+  margin: auto;
+  border: 1px solid #ccc;
+  border-radius: 10px;
+  padding: 10px;
+  height: 80vh; /* Set a fixed height for the chat container */
+}
+
+.chatLog {
+  flex: 1;
+  overflow-y: auto;
+  margin-bottom: 10px;
+  padding-right: 10px; /* Add padding to prevent overlap */
+}
+
+.message {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.message.sent {
+  align-items: flex-end;
+}
+
+.message p {
+  background-color: #f1f0f0;
+  border-radius: 5px;
+  padding: 5px 10px;
+  max-width: 70%;
+  margin: 0;
+}
+
+.message.sent p {
+  background-color: #007bff;
+  color: white;
+}
+
+.inputContainer {
+  display: flex;
+  gap: 10px;
+}
+
+.textInput {
+  flex: 1;
+  padding: 10px;
+  border-radius: 10px;
+  border: 1px solid #ccc;
+}
+
+.sendButton {
+  padding: 10px;
+  border-radius: 10px;
+  border: none;
+  background-color: #007bff;
+  color: white;
+  cursor: pointer;
+}

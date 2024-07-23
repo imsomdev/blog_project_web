@@ -20,9 +20,9 @@ import PollModal from "../pollModal/PollModal";
 const BlogPosts = () => {
   const router = useRouter();
   const { token } = useToken();
-  const searchParams = useSearchParams();
-  const searchTerm = searchParams.get("search");
-  const isRecentPosts = searchParams.get("recent-post");
+  const searchParams = useSearchParams() || null;
+  const searchTerm = searchParams.get("search") || null;
+  const isRecentPosts = searchParams.get("recent-post") || null;
   const pageNumber: string = searchParams.get("page") || "1";
   const pageSize: number = 8;
 

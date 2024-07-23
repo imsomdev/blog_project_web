@@ -5,6 +5,7 @@ import ContentServices from "@/services/content.services";
 import { useQuery } from "@tanstack/react-query";
 import React from "react";
 import styles from "./ViewBlogPost.module.css";
+import { FaRegMessage } from "react-icons/fa6";
 
 interface BlogPostInterface {
   params: {
@@ -41,7 +42,10 @@ const ViewBlogPost = ({ params }: BlogPostInterface) => {
             <span key={item.id}>{item.name}, </span>
           ))}
         </div>
-        <p className={styles.author}>Author: {data?.author}</p>
+        <p className={styles.author}>
+          Author: {data?.author}
+          <FaRegMessage />
+        </p>
         <div className={styles.editDeleteBtns}>
           {data && <EditPost postId={params.post_id} data={data} />}
           {data && <DeletePost postId={params.post_id} data={data} />}
