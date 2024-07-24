@@ -91,14 +91,17 @@ const ChatInputOutput: React.FC = () => {
   return (
     <div className={styles.chatContainer}>
       {!otherUsername ? (
-        userNamesData?.map((userName: any) => (
-          <button
-            key={`${userName.other_user}_${userName.userId}`}
-            onClick={() => handleUserNameClicked(userName.other_user)}
-          >
-            {userName.other_user}
-          </button>
-        ))
+        <div className={styles.userList}>
+          {userNamesData?.map((userName: any) => (
+            <button
+              className={styles.userButton}
+              key={`${userName.other_user}_${userName.userId}`}
+              onClick={() => handleUserNameClicked(userName.other_user)}
+            >
+              {userName.other_user}
+            </button>
+          ))}
+        </div>
       ) : (
         <>
           <h2>{otherUsername}</h2>
