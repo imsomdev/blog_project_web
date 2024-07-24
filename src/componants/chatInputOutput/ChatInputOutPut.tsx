@@ -4,6 +4,7 @@ import { useQuery } from "@tanstack/react-query";
 import ChatServices from "@/services/chat.services";
 import { getLocalValue } from "@/utils/localStorage.utils";
 import styles from "./ChatInputOutput.module.css";
+import { useRouter, useSearchParams } from "next/navigation";
 
 interface Message {
   text: string;
@@ -15,20 +16,25 @@ interface Message {
 const ChatInputOutput: React.FC = () => {
   const [messages, setMessages] = useState<Message[]>([]);
   const [newMessage, setNewMessage] = useState("");
-  const [otherUsername, setOtherUsername] = useState("");
-  const [usernameEntered, setUsernameEntered] = useState(false);
   const [socket, setSocket] = useState<WebSocket | null>(null);
-
+  const router = useRouter();
   const userName = getLocalValue("userDetails")?.username;
+  const searchParams = useSearchParams();
+  const otherUsername = searchParams.get("user") || "";
 
   const { data, refetch } = useQuery({
-    queryKey: ["chat-history", userName, otherUsername],
+    queryKey: ["chat-history", otherUsername],
     queryFn: () => ChatServices.getChatHistory(userName, otherUsername),
-    enabled: usernameEntered, // Fetch chat history only when usernames are entered
+    enabled: !!otherUsername,
+  });
+
+  const { data: userNamesData, refetch: userNamesRefetch } = useQuery({
+    queryKey: ["chat-user-list", userName],
+    queryFn: () => ChatServices.getNameOfReceivers(),
   });
 
   useEffect(() => {
-    if (usernameEntered && userName && otherUsername) {
+    if (userName && otherUsername) {
       const newSocket = new WebSocket(
         `ws://127.0.0.1:8000/ws/chat/${userName}/${otherUsername}/`
       );
@@ -59,7 +65,7 @@ const ChatInputOutput: React.FC = () => {
         newSocket.close();
       };
     }
-  }, [usernameEntered, userName, otherUsername]);
+  }, [userName, otherUsername]);
 
   useEffect(() => {
     if (data) {
@@ -67,15 +73,8 @@ const ChatInputOutput: React.FC = () => {
     }
   }, [data]);
 
-  const handleUsernameSubmit = () => {
-    if (userName.trim() !== "" && otherUsername.trim() !== "") {
-      setUsernameEntered(true);
-      refetch();
-    }
-  };
-
   const handleSendMessage = () => {
-    if (newMessage.trim() !== "" && usernameEntered && socket) {
+    if (newMessage.trim() !== "" && socket) {
       const message = {
         message: newMessage,
         sender: userName,
@@ -85,21 +84,21 @@ const ChatInputOutput: React.FC = () => {
     }
   };
 
+  const handleUserNameClicked = (username: string) => {
+    router.push(`/chat?user=${username}`);
+  };
+
   return (
     <div className={styles.chatContainer}>
-      {!usernameEntered ? (
-        <div className={styles.usernameInput}>
-          <input
-            type="text"
-            value={otherUsername}
-            onChange={(e) => setOtherUsername(e.target.value)}
-            placeholder="Enter the username of the person you want to chat with..."
-            className={styles.textInput}
-          />
-          <button onClick={handleUsernameSubmit} className={styles.sendButton}>
-            Start Chat
+      {!otherUsername ? (
+        userNamesData?.map((userName: any) => (
+          <button
+            key={`${userName.other_user}_${userName.userId}`}
+            onClick={() => handleUserNameClicked(userName.other_user)}
+          >
+            {userName.other_user}
           </button>
-        </div>
+        ))
       ) : (
         <>
           <h2>{otherUsername}</h2>
