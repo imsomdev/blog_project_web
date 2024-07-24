@@ -15,12 +15,15 @@ import {
   Input,
   useDisclosure,
   Modal,
+  Tooltip,
+  button,
 } from "@nextui-org/react";
 import { getLocalValue } from "@/utils/localStorage.utils";
 import { GrSearch } from "react-icons/gr";
 import { useRouter } from "next/navigation";
 import _ from "lodash";
 import Poll from "../poll/Poll";
+import { TiMessages } from "react-icons/ti";
 
 const BlogNavbar: React.FC = () => {
   const { token, setToken } = useToken();
@@ -60,6 +63,10 @@ const BlogNavbar: React.FC = () => {
     router.replace(url);
   };
 
+  const redirectToChat = () => {
+    router.push("/chat");
+  };
+
   return (
     <>
       <Navbar>
@@ -93,8 +100,15 @@ const BlogNavbar: React.FC = () => {
           </NavbarItem>
           <NavbarItem>
             <button color="foreground" onClick={handleRecentPost}>
-              Recent Posts
+              Recent posts
             </button>
+          </NavbarItem>
+          <NavbarItem>
+            <Tooltip showArrow={true} content="Chats">
+              <button color="foreground" onClick={redirectToChat}>
+                <TiMessages />
+              </button>
+            </Tooltip>
           </NavbarItem>
         </NavbarContent>
 
