@@ -5,6 +5,7 @@ import ChatServices from "@/services/chat.services";
 import { getLocalValue } from "@/utils/localStorage.utils";
 import styles from "./ChatInputOutput.module.css";
 import { useRouter, useSearchParams } from "next/navigation";
+import { RiSendPlane2Fill } from "react-icons/ri";
 
 interface Message {
   text: string;
@@ -104,7 +105,7 @@ const ChatInputOutput: React.FC = () => {
         </div>
       ) : (
         <>
-          <h2>{otherUsername}</h2>
+          <h2 className={styles.usernameHeader}>{otherUsername}</h2>
 
           <div className={styles.chatLog}>
             {messages.map((message: any, index) => (
@@ -128,7 +129,7 @@ const ChatInputOutput: React.FC = () => {
               className={styles.textInput}
             />
             <button onClick={handleSendMessage} className={styles.sendButton}>
-              Send
+              <RiSendPlane2Fill />
             </button>
           </div>
         </>
