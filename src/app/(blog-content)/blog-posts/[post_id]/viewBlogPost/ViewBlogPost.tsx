@@ -7,6 +7,8 @@ import React from "react";
 import styles from "./ViewBlogPost.module.css";
 import { FaRegMessage } from "react-icons/fa6";
 import { useRouter } from "next/navigation";
+import { Button } from "@nextui-org/react";
+import { TAGS } from "@/utils/constants.utils";
 
 interface BlogPostInterface {
   params: {
@@ -23,6 +25,11 @@ const ViewBlogPost = ({ params }: BlogPostInterface) => {
   const chatHandler = () => {
     router.push(`/chat?user=${data.author}`);
   };
+
+  const tagHandler = (tag: string) => {
+    const tags = TAGS.find((tagName: any) => tagName.name === tag);
+    router.push(`/?tag=${tags?.id.toString()}`);
+  };
   if (isLoading) {
     return (
       <div className={styles.loadingSpinner}>
@@ -34,6 +41,7 @@ const ViewBlogPost = ({ params }: BlogPostInterface) => {
   if (isError) {
     return <div>Error: {error.message}</div>;
   }
+  console.log(data);
 
   return (
     <div className={styles.gridContainer}>
@@ -43,7 +51,13 @@ const ViewBlogPost = ({ params }: BlogPostInterface) => {
         <div className={styles.tags}>
           Tags:{" "}
           {data?.tags.map((item: any) => (
-            <span key={item.id}>{item.name}, </span>
+            <button
+              key={item.id}
+              style={{ marginRight: 8 }}
+              onClick={() => tagHandler(item.name)}
+            >
+              {item.name}
+            </button>
           ))}
         </div>
         <p className={styles.author}>

@@ -16,24 +16,45 @@ import {
 import styles from "./BlogPosts.module.css";
 import { PiEmptyDuotone } from "react-icons/pi";
 import PollModal from "../pollModal/PollModal";
+import { useEffect, useState } from "react";
+import { TAGS } from "@/utils/constants.utils";
 
 const BlogPosts = () => {
   const router = useRouter();
   const { token } = useToken();
   const searchParams = useSearchParams() || null;
   const searchTerm = searchParams.get("search") || null;
-  const isRecentPosts = searchParams.get("recent-post") || null;
+  const isRecentPosts = searchParams.get("recent-post") || "";
+  const postTag = searchParams.get("tag");
+  // const [tagId, setTagId] = useState<string>("");
   const pageNumber: string = searchParams.get("page") || "1";
   const pageSize: number = 8;
+  // useEffect(() => {
+  //   if (postTag) {
+  //     const tag = TAGS.find((tag) => tag.name === postTag);
+  //     if (tag) {
+  //       setTagId(tag.id.toString());
+  //     }
+  //   }
+  // }, [postTag]);
 
   const { data, isLoading, isError } = useQuery({
-    queryKey: ["blog-posts", token, searchTerm, isRecentPosts, pageNumber],
+    queryKey: [
+      "blog-posts",
+      token,
+      searchTerm,
+      isRecentPosts,
+      pageNumber,
+      postTag,
+    ],
     queryFn: () => {
       if (token) {
         if (searchTerm) {
           return ContentServices.searchPosts(searchTerm, pageNumber);
         } else if (isRecentPosts === "true") {
           return ContentServices.getRecentPost(pageNumber);
+        } else if (postTag) {
+          return ContentServices.getPostByTag(postTag, pageNumber);
         } else {
           return ContentServices.getAllPost(Number(pageNumber));
         }
@@ -53,8 +74,6 @@ const BlogPosts = () => {
     const param = new URLSearchParams(window.location.search);
     param.set("page", page.toString());
     router.replace(`/?${param.toString()}`);
-
-    // console.log(param.toString());
   };
   console.log(isRecentPosts, "isRecentPosts");
 

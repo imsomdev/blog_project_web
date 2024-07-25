@@ -119,6 +119,25 @@ const ContentServices = {
       throw new Error("Something went wrong. Please try again.");
     }
   },
+  async getPostByTag(tagId: string, pageNumber: string) {
+    const token = localStorage.getItem("jwt");
+    try {
+      const response = await axios.get(
+        `filter-by-tags?tags=${tagId}&page=${pageNumber}`,
+        {
+          headers: {
+            Authorization: "Bearer " + token,
+          },
+        }
+      );
+      return response.data;
+    } catch (error: any) {
+      if (isAxiosError(error)) {
+        throw new Error(error.response?.data.message);
+      }
+      throw new Error("Something went wrong. Please try again.");
+    }
+  },
   async gePollDetails() {
     const token = localStorage.getItem("jwt");
     try {
