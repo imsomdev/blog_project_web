@@ -4,8 +4,7 @@ import { useQuery } from "@tanstack/react-query";
 import ChatServices from "@/services/chat.services";
 import { getLocalValue } from "@/utils/localStorage.utils";
 import styles from "./ChatInputOutput.module.css";
-import { useRouter, useSearchParams } from "next/navigation";
-import { RiSendPlane2Fill } from "react-icons/ri";
+import { useSearchParams } from "next/navigation";
 import ChatHistory from "./chatHistory/ChatHistory";
 import ChatListUser from "./chatListUsers/ChatListUser";
 
@@ -63,11 +62,6 @@ const ChatInputOutput: React.FC = () => {
     }
   }, [userName, otherUsername]);
 
-  useEffect(() => {
-    if (data) {
-      setMessages(data);
-    }
-  }, [data]);
   useEffect(() => {
     if (data) {
       setMessages(data);
