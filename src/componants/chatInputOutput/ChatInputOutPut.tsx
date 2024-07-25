@@ -6,6 +6,8 @@ import { getLocalValue } from "@/utils/localStorage.utils";
 import styles from "./ChatInputOutput.module.css";
 import { useRouter, useSearchParams } from "next/navigation";
 import { RiSendPlane2Fill } from "react-icons/ri";
+import ChatHistory from "./chatHistory/ChatHistory";
+import ChatListUser from "./chatListUsers/ChatListUser";
 
 interface Message {
   text: string;
@@ -16,9 +18,7 @@ interface Message {
 
 const ChatInputOutput: React.FC = () => {
   const [messages, setMessages] = useState<Message[]>([]);
-  const [newMessage, setNewMessage] = useState("");
   const [socket, setSocket] = useState<WebSocket | null>(null);
-  const router = useRouter();
   const userName = getLocalValue("userDetails")?.username;
   const searchParams = useSearchParams();
   const otherUsername = searchParams.get("user") || "";
@@ -29,15 +29,10 @@ const ChatInputOutput: React.FC = () => {
     enabled: !!otherUsername,
   });
 
-  const { data: userNamesData, refetch: userNamesRefetch } = useQuery({
-    queryKey: ["chat-user-list", userName],
-    queryFn: () => ChatServices.getNameOfReceivers(),
-  });
-
   useEffect(() => {
     if (userName && otherUsername) {
       const newSocket = new WebSocket(
-        `ws://127.0.0.1:8000/ws/chat/${userName}/${otherUsername}/`
+        `ws://127.0.0.1:8000/ws/chat/${userName}/${otherUsername}`
       );
       setSocket(newSocket);
 
@@ -73,66 +68,23 @@ const ChatInputOutput: React.FC = () => {
       setMessages(data);
     }
   }, [data]);
-
-  const handleSendMessage = () => {
-    if (newMessage.trim() !== "" && socket) {
-      const message = {
-        message: newMessage,
-        sender: userName,
-      };
-      socket.send(JSON.stringify(message));
-      setNewMessage("");
+  useEffect(() => {
+    if (data) {
+      setMessages(data);
     }
-  };
-
-  const handleUserNameClicked = (username: string) => {
-    router.push(`/chat?user=${username}`);
-  };
+  }, [data]);
 
   return (
     <div className={styles.chatContainer}>
       {!otherUsername ? (
-        <div className={styles.userList}>
-          {userNamesData?.map((userName: any) => (
-            <button
-              className={styles.userButton}
-              key={`${userName.other_user}_${userName.userId}`}
-              onClick={() => handleUserNameClicked(userName.other_user)}
-            >
-              {userName.other_user}
-            </button>
-          ))}
-        </div>
+        <ChatListUser userName={userName} />
       ) : (
-        <>
-          <h2 className={styles.usernameHeader}>{otherUsername}</h2>
-
-          <div className={styles.chatLog}>
-            {messages.map((message: any, index) => (
-              <div
-                key={index}
-                className={`${styles.message} ${
-                  message.sender === userName ? styles.sent : ""
-                }`}
-              >
-                {/* <strong>{message.sender}:</strong> */}
-                <p>{message.text ? message.text : message?.message}</p>
-              </div>
-            ))}
-          </div>
-          <div className={styles.inputContainer}>
-            <input
-              type="text"
-              value={newMessage}
-              onChange={(e) => setNewMessage(e.target.value)}
-              placeholder="Type a message..."
-              className={styles.textInput}
-            />
-            <button onClick={handleSendMessage} className={styles.sendButton}>
-              <RiSendPlane2Fill />
-            </button>
-          </div>
-        </>
+        <ChatHistory
+          otherUsername={otherUsername}
+          messages={messages}
+          userName={userName}
+          socket={socket}
+        />
       )}
     </div>
   );
