@@ -31,7 +31,7 @@ const ChatInputOutput: React.FC = () => {
   useEffect(() => {
     if (userName && otherUsername) {
       const newSocket = new WebSocket(
-        `ws://127.0.0.1:8000/ws/chat/${userName}/${otherUsername}`
+        `${process.env.NEXT_PUBLIC_DJANGO_WEBSOCKET_URL}chat/${userName}/${otherUsername}`
       );
       setSocket(newSocket);
 

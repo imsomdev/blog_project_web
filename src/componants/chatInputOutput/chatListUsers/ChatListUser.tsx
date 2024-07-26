@@ -20,7 +20,7 @@ const ChatListUser = ({ userName }: ChatListUserInterface) => {
   useEffect(() => {
     if (userName) {
       const newSocket = new WebSocket(
-        `ws://127.0.0.1:8000/ws/notification/chat/${userName}`
+        `${process.env.NEXT_PUBLIC_DJANGO_WEBSOCKET_URL}notification/chat/${userName}`
       );
       setSocket(newSocket);
 

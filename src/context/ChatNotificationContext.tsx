@@ -24,7 +24,7 @@ export const WebSocketProvider: React.FC<WebSocketProviderProps> = ({
   useEffect(() => {
     if (userName) {
       const notificationSocket = new WebSocket(
-        `ws://127.0.0.1:8000/ws/notification/chat/${userName}`
+        `${process.env.NEXT_PUBLIC_DJANGO_WEBSOCKET_URL}notification/chat/${userName}`
       );
 
       notificationSocket.onmessage = (event) => {
