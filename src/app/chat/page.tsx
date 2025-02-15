@@ -1,10 +1,12 @@
 import ChatInputOutput from "@/componants/chatInputOutput/ChatInputOutPut";
-import React from "react";
+import React, { Suspense } from "react";
 
 const page = () => {
   return (
     <div>
-      <ChatInputOutput />
+      <Suspense fallback={<div>Loading...</div>}>
+        <ChatInputOutput />
+      </Suspense>
     </div>
   );
 };

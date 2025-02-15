@@ -3,6 +3,7 @@ import BlogPosts from "@/componants/blogPosts/BlogPosts";
 import { WebSocketProvider } from "@/context/ChatNotificationContext";
 import { getLocalValue } from "@/utils/localStorage.utils";
 import store from "@/utils/reduxStore.utils";
+import { Suspense } from "react";
 import { Provider } from "react-redux";
 
 export default function Home() {
@@ -11,7 +12,9 @@ export default function Home() {
     <>
       <Provider store={store}>
         <WebSocketProvider userName={userName}>
-          <BlogPosts />
+          <Suspense fallback={<div>Loading...</div>}>
+            <BlogPosts />
+          </Suspense>
         </WebSocketProvider>
       </Provider>
     </>
