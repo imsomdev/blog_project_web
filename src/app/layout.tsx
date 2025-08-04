@@ -18,9 +18,11 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  // Make root take full viewport and prevent page scroll globally.
+  // Auth pages already center content and use full height, so this eliminates stray scrollbars.
   return (
-    <html lang="en">
-      <body className={inter.className}>
+    <html lang="en" className="h-screen overflow-hidden">
+      <body className={`${inter.className} h-screen overflow-hidden`}>
         <TokenProvider>
           <ReactQueryProvider>
             <Navbar />

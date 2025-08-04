@@ -28,6 +28,7 @@ export const WebSocketProvider: React.FC<WebSocketProviderProps> = ({
       );
 
       notificationSocket.onmessage = (event) => {
+        console.log(`Received message: ${event.data}`);
         const data = JSON.parse(event.data);
         if (data.type === "chat_notification") {
           toast.success(`${data.sender} messaged you!`);
